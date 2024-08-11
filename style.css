@@ -17,7 +17,7 @@ canvas {
 }
 
 #top-bar {
-  background-image: url('http://www.textfiles.com/underconstruction/mamagnolia_acresunderconstruction.gif');
+  background-image: url('/mamagnolia_acresunderconstruction.gif');
   position: fixed;
   top: 0;
   left: 0;
