@@ -62,8 +62,8 @@ Array(200).fill().forEach(addStar);
 // Background
 
 // Reference the textures with import.meta.url
-const spaceTexture = new THREE.TextureLoader().load('/whereismyfun42/space.jpg');
-scene.background = spaceTexture;
+//const spaceTexture = new THREE.TextureLoader().load('/whereismyfun42/space.jpg');
+//scene.background = spaceTexture;
 
 // Avatar
 
