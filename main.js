@@ -44,20 +44,30 @@ scene.add(pointLight, ambientLight);
 
 // const controls = new OrbitControls(camera, renderer.domElement);
 
-function addStar() {
-  const geometry = new THREE.SphereGeometry(0.25, 24, 24);
-  const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-  const star = new THREE.Mesh(geometry, material);
+const cacovideo = document.createElement('video');
+video.src = '/whereismyfun42/cacodemon.mp4'; // Replace with your video file path
+video.loop = true;
+video.muted = true; // Mute the video
+video.play();
+
+const videoTexture = new THREE.VideoTexture(video);
+
+function addCaco() {
+  const spriteMaterial = new THREE.SpriteMaterial({ map: cacodemonvideoTexture });
+  const caco = new THREE.Sprite(spriteMaterial);
 
   const [x, y, z] = Array(3)
     .fill()
     .map(() => THREE.MathUtils.randFloatSpread(100));
 
-  star.position.set(x, y, z);
-  scene.add(star);
+  caco.position.set(x, y, z);
+  caco.scale.set(2, 2, 1); // Adjust the size of the stars
+  scene.add(caco);
 }
 
-Array(200).fill().forEach(addStar);
+// Generate Multiple Stars
+
+Array(200).fill().forEach(addCaco);
 
 // Background
 
