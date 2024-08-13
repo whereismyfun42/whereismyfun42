@@ -45,15 +45,15 @@ scene.add(pointLight, ambientLight);
 // const controls = new OrbitControls(camera, renderer.domElement);
 
 const cacovideo = document.createElement('video');
-video.src = '/whereismyfun42/cacodemon.mp4'; // Replace with your video file path
-video.loop = true;
-video.muted = true; // Mute the video
-video.play();
+cacovideo.src = '/whereismyfun42/cacodemon.mp4'; // Replace with your video file path
+cacovideo.loop = true;
+cacovideo.muted = true; // Mute the video
+cacovideo.play();
 
-const videoTexture = new THREE.VideoTexture(video);
+const videoTexture = new THREE.VideoTexture(cacovideo);
 
 function addCaco() {
-  const spriteMaterial = new THREE.SpriteMaterial({ map: cacodemonvideoTexture });
+  const spriteMaterial = new THREE.SpriteMaterial({ map: videoTexture });
   const caco = new THREE.Sprite(spriteMaterial);
 
   const [x, y, z] = Array(3)
