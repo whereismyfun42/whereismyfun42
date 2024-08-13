@@ -44,16 +44,16 @@ scene.add(pointLight, ambientLight);
 
 // const controls = new OrbitControls(camera, renderer.domElement);
 
-const cacovideo = document.createElement('video');
-cacovideo.src = '/whereismyfun42/cacodemon.mp4'; // Replace with your video file path
-cacovideo.loop = true;
-cacovideo.muted = true; // Mute the video
-cacovideo.play();
+const transparentVideo = document.createElement('video');
+transparentVideo.src = '/whereismyfun42/cacodemontransparent.webm'; // Path to your WebM video
+transparentVideo.loop = true;
+transparentVideo.muted = true;
+transparentVideo.play();
 
-const videoTexture = new THREE.VideoTexture(cacovideo);
+const transparentVideoTexture = new THREE.VideoTexture(transparentVideo);
 
-function addCaco() {
-  const spriteMaterial = new THREE.SpriteMaterial({ map: videoTexture });
+function addTransparentCaco() {
+  const spriteMaterial = new THREE.SpriteMaterial({ map: transparentVideoTexture });
   const caco = new THREE.Sprite(spriteMaterial);
 
   const [x, y, z] = Array(3)
@@ -65,9 +65,10 @@ function addCaco() {
   scene.add(caco);
 }
 
-// Generate Multiple Stars
+// Generate Multiple Transparent Stars
 
-Array(200).fill().forEach(addCaco);
+Array(200).fill().forEach(addTransparentCaco);
+
 
 // Background
 
