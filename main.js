@@ -53,11 +53,7 @@ transparentVideo.play();
 const transparentVideoTexture = new THREE.VideoTexture(transparentVideo);
 
 function addTransparentCaco() {
-  const spriteMaterial = new THREE.SpriteMaterial({ 
-    map: transparentVideoTexture, 
-    transparent: true,
-    alphaTest: 0.5 // or adjust as needed
-  });
+  const spriteMaterial = new THREE.SpriteMaterial({ map: transparentVideoTexture });
   const caco = new THREE.Sprite(spriteMaterial);
 
   const [x, y, z] = Array(3)
