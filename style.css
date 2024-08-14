@@ -34,6 +34,18 @@ canvas {
   box-sizing: border-box;
 }
 
+part {
+	@color: #fd0;
+	@glowColor: #fed;
+	pointer-events: none;
+	display: block;
+	position: absolute;
+	z-index: 100;
+	width: 9px;
+	height: 9px;
+	margin: -4px;
+	opacity: 0;
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAKpJREFUeNpi/L+IgZGBgYEZiFmgmAmI/wHxHyj+ywJVwAXEfFDMCsS/gfgTFH+D6QZJSgGxBBBzAPEPIH7BAAG/kBVJMBj4ZDEISjsyvH+6n+HClmlAsS9A/IEJ6gZWsAlCMi4MTExsYIUQE8FuhDnyN9iKd0/2MPz/9wtsEsRKkMP/MQJ9B9IhgsNNz4D4DQtU9SeoI79g8d0fkKK/IG+CfAFyJLZwAggwAL7rODKpW/oeAAAAAElFTkSuQmCC') no-repeat;}
 
 
 main {
