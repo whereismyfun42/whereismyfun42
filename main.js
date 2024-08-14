@@ -1,6 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import {convertAniBinaryToCSS} from 'ani-cursor';
 
 // Setup
 
@@ -11,6 +12,46 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
   alpha: true,
+});
+
+
+async function applyCursor(selector, aniPath) {
+  try {
+    const response = await fetch(aniPath);
+    if (!response.ok) throw new Error('Failed to fetch cursor file');
+    
+    const data = new Uint8Array(await response.arrayBuffer());
+    
+    const style = document.createElement('style');
+    style.innerText = convertAniBinaryToCSS(selector, data);
+    
+    document.head.appendChild(style);
+  } catch (error) {
+    console.error('Error applying cursor:', error);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Apply default cursor to the whole page
+  applyCursor("body", "/whereismyfun42/eyered.ani");
+
+  // Apply text select cursor to text elements
+  applyCursor("body, p, h1, h2, h3, blockquote", "/whereismyfun42/text65.ani");
+  
+  // Apply button click cursor to interactive elements
+  applyCursor("button, a, input, textarea", "/whereismyfun42/eyeblue.ani");
+
+  // Add hover effect for button and link cursors directly in CSS for better control
+  const style = document.createElement('style');
+  style.innerHTML = `
+    button, a, input, textarea {
+      cursor: url('/whereismyfun42/eyeblue.ani'), auto;
+    }
+    body, p, h1, h2, h3, blockquote {
+      cursor: url('/whereismyfun42/text65.ani'), auto;
+    }
+  `;
+  document.head.appendChild(style);
 });
 
 renderer.setPixelRatio(window.devicePixelRatio);
