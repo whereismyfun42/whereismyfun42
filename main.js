@@ -52,7 +52,15 @@ transparentVideo.muted = true;
 function addTransparentCaco() {
   // Clone the video element for each sprite to allow independent control
   const videoClone = transparentVideo.cloneNode();
-  videoClone.play();
+  videoClone.loop = true;
+  videoClone.muted = true;
+  
+  // Delay the start of each video to desynchronize animations
+  const randomDelay = Math.random() * 2000; // Delay between 0 and 2000 milliseconds
+  
+  setTimeout(() => {
+    videoClone.play();
+  }, randomDelay);
 
   const videoTexture = new THREE.VideoTexture(videoClone);
 
@@ -66,17 +74,11 @@ function addTransparentCaco() {
   caco.position.set(x, y, z);
   caco.scale.set(2, 2, 1); // Adjust the size of the stars
   scene.add(caco);
-
-  // Apply a random delay before starting the animation
-  const randomDelay = Math.random() * 2000; // Delay between 0 and 2000 milliseconds
-  videoClone.currentTime = 0;
-  setTimeout(() => {
-    videoClone.play();
-  }, randomDelay);
 }
 
 // Generate Multiple Transparent Stars
 Array(200).fill().forEach(addTransparentCaco);
+
 
 
 
