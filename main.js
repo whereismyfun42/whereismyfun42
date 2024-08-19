@@ -20,6 +20,41 @@ camera.position.setX(-3);
 
 renderer.render(scene, camera);
 
+const transparentVideo = document.createElement('video');
+transparentVideo.src = '/whereismyfun42/cacodemontransparent.webm'; // Path to your WebM video
+transparentVideo.loop = true;
+transparentVideo.muted = true;
+
+function addTransparentCaco() {
+  // Clone the video element for each sprite to allow independent control
+  const videoClone = transparentVideo.cloneNode();
+  videoClone.loop = true;
+  videoClone.muted = true;
+
+  // Delay the start of each video to desynchronize animations
+  const randomDelay = Math.random() * 2000; // Delay between 0 and 2000 milliseconds
+
+  setTimeout(() => {
+    videoClone.play();
+  }, randomDelay);
+
+  const videoTexture = new THREE.VideoTexture(videoClone);
+
+  const spriteMaterial = new THREE.SpriteMaterial({ map: videoTexture });
+  const caco = new THREE.Sprite(spriteMaterial);
+
+  const [x, y, z] = Array(3)
+    .fill()
+    .map(() => THREE.MathUtils.randFloatSpread(100));
+
+  caco.position.set(x, y, z);
+  caco.scale.set(2, 2, 1); // Adjust the size of the stars
+  scene.add(caco);
+}
+
+// Generate Multiple Transparent Stars
+Array(200).fill().forEach(addTransparentCaco);
+
 async function applyCursor(selector, aniPath) {
   try {
     const response = await fetch(aniPath);
