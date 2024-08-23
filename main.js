@@ -1,9 +1,8 @@
 import './style.css';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { convertAniBinaryToCSS } from 'ani-cursor';
 
-// Setup
+// Setup Scene, Camera, and Renderer
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -18,7 +17,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.setZ(30);
 camera.position.setX(-3);
 
-renderer.render(scene, camera);
+// Add Transparent Cacodemon
 
 const transparentVideo = document.createElement('video');
 transparentVideo.src = '/whereismyfun42/cacodemontransparent.webm'; // Path to your WebM video
@@ -26,12 +25,10 @@ transparentVideo.loop = true;
 transparentVideo.muted = true;
 
 function addTransparentCaco() {
-  // Clone the video element for each sprite to allow independent control
   const videoClone = transparentVideo.cloneNode();
   videoClone.loop = true;
   videoClone.muted = true;
 
-  // Delay the start of each video to desynchronize animations
   const randomDelay = Math.random() * 2000; // Delay between 0 and 2000 milliseconds
 
   setTimeout(() => {
@@ -39,14 +36,10 @@ function addTransparentCaco() {
   }, randomDelay);
 
   const videoTexture = new THREE.VideoTexture(videoClone);
-
   const spriteMaterial = new THREE.SpriteMaterial({ map: videoTexture });
   const caco = new THREE.Sprite(spriteMaterial);
 
-  const [x, y, z] = Array(3)
-    .fill()
-    .map(() => THREE.MathUtils.randFloatSpread(100));
-
+  const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
   caco.position.set(x, y, z);
   caco.scale.set(2, 2, 1); // Adjust the size of the stars
   scene.add(caco);
@@ -55,7 +48,117 @@ function addTransparentCaco() {
 // Generate Multiple Transparent Stars
 Array(200).fill().forEach(addTransparentCaco);
 
-async function applyCursor(selector, aniPath) {
+// Particle Effects Setup
+
+let particles = [];
+
+function createParticles(count) {
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < count; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particles.push(particle);
+    fragment.appendChild(particle);
+  }
+  document.body.appendChild(fragment);
+}
+
+function generateParticleAnimations() {
+  let animationRules = '';
+  const steps = 10;
+  const gravity = 80;
+  const numAnimations = 111;
+  const size = 2;
+
+  function jsonToCss(json) {
+    return `{ ${Object.entries(json).map(([key, value]) => `${key}: ${value};`).join(' ')} }`;
+  }
+
+  for (let i = 0; i < numAnimations; i++) {
+    let angle = 2 * Math.PI * Math.random();
+    let x = Math.cos(angle) * size;
+    let y = Math.sin(angle) * size;
+
+    animationRules += `@keyframes drop${i} { \r\n`;
+
+    let frames = {};
+    let velocityY = y * gravity / steps;
+
+    for (let t = 0; t <= 100; t += 100 / steps) {
+      frames[`${t}%`] = {
+        opacity: Math.pow(Math.max(0, 1 - t / 100 + (t < 30 ? 0 : 1) * (Math.random() - 0.5)), 0.7).toFixed(2),
+        transform: `translate(${x * t}px, ${y}px) scale(${(0.9 - t / 200).toFixed(1)})`,
+      };
+      y += velocityY;
+      velocityY += gravity / steps;
+    }
+
+    frames['100%'].opacity = '0';
+
+    animationRules += Object.keys(frames).map(val => `\t${val}  \t${jsonToCss(frames[val])}`).join('\r\n') + '\r\n';
+    animationRules += '}\r\n\r\n';
+  }
+
+  const style = document.createElement('style');
+  style.innerHTML = animationRules;
+  document.head.appendChild(style);
+  createParticles(500);
+}
+
+// Initialize particle animations
+generateParticleAnimations();
+
+// Handle Mouse Movement and Particles
+
+let previousX, previousY, totalParticles = 0;
+
+function handleMouseMovement(event) {
+  const x = event.clientX + window.scrollX;
+  const y = event.clientY + window.scrollY;
+  const deltaX = previousX - x;
+  const deltaY = previousY - y;
+  const distance = Math.pow(deltaX ** 2 + deltaY ** 2, 0.25) || 0;
+
+  if (particles.length < distance) {
+    createParticles(Math.max(distance, 100) * 1.5);
+  }
+
+  const slice = particles.splice(0, distance);
+  slice.forEach(particle => {
+    if (particle) {
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      particle.style.animation = `drop${Math.floor(Math.random() * 111)} 1.25s linear`;
+    }
+  });
+
+  previousX = x;
+  previousY = y;
+  totalParticles += distance;
+
+  setTimeout(() => {
+    slice.forEach(particle => {
+      if (particle) {
+        particle.style.animation = '';
+      }
+    });
+    particles.push(...slice);
+    totalParticles -= distance;
+    document.querySelector('.particles b').textContent = `${totalParticles}, ${particles.length}`;
+  }, 1250);
+
+  document.querySelector('.particles b').textContent = `${totalParticles}, ${particles.length}`;
+}
+
+document.addEventListener('mouseover', event => {
+  previousX = event.clientX + window.scrollX;
+  previousY = event.clientY + window.scrollY;
+});
+document.addEventListener('mousemove', handleMouseMovement, true);
+
+// Custom Cursors
+
+async function applyCustomCursor(selector, aniPath) {
   try {
     const response = await fetch(aniPath);
     if (!response.ok) throw new Error('Failed to fetch cursor file');
@@ -80,179 +183,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  var makeCool,
-    timeout = 1.25,
-    i,
-    rules = '',
-    frames,
-    style,
-    steps = 10,
-    gForce = 80,
-    pX,
-    pY,
-    totalParticles = 0,
-    prevTime = performance.now(),
-    lastTimes = [],
-    randomAnis = 111,
-    particles = [];
+  applyCustomCursor('body', '/whereismyfun42/eyered.ani');
+  applyCustomCursor('body, p, h1, h2, h3, blockquote', '/whereismyfun42/text65.ani');
+  applyCustomCursor('button, a, input, textarea', '/whereismyfun42/eyeblue.ani');
 
-  if (!window.requestAnimationFrame) {
-    window.requestAnimationFrame = (function () {
-      return (
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function (callback) {
-          window.setTimeout(callback, 1000 / 60);
-        }
-      );
-    })();
-  }
-
-  function addParticles(count) {
-    var fragment = document.createDocumentFragment(),
-      part;
-    for (var i = count; i--;) {
-      part = document.createElement('part');
-      particles.push(part);
-      fragment.appendChild(part);
-    }
-    document.body.appendChild(fragment);
-  }
-
-  function jsonToCss(json) {
-    var result = '{ ';
-    Object.keys(json).forEach(function (key) {
-      result += key + ': ' + json[key] + '; ';
-    });
-    result += '}';
-    return result;
-  }
-
-  var s = 2,
-    a,
-    x,
-    y,
-    ys;
-
-  for (i = randomAnis; i--;) {
-    a = 2 * Math.PI * Math.random();
-    x = Math.cos(a) * s;
-    y = Math.sin(a) * s;
-
-    rules += '@keyframes drop' + i + ' { \r\n';
-
-    frames = {};
-
-    ys = y * gForce / steps;
-
-    for (var t = 0; t <= 100; t += 100 / steps) {
-      frames[t + '%'] = {
-        opacity: Math.pow(Math.max(0, 1 - t / 100 + (t < 30 ? 0 : 1) * (Math.random() - 0.5)), 0.7).toFixed(2),
-        transform:
-          'translate(' +
-          (x * t || 0) +
-          'px, ' +
-          (y || 0) +
-          'px) scale(' +
-          (0.9 - t / 200).toFixed(1) +
-          ')',
-      };
-      y += ys;
-      ys += gForce / steps;
-    }
-
-    frames['100%'].opacity = '0';
-
-    Object.keys(frames).forEach(function (val) {
-      rules += '\t' + val + '  \t' + jsonToCss(frames[val]) + '\r\n';
-    });
-    rules += '}\r\n\r\n';
-  }
-
-  style = document.createElement('style');
-  style.innerHTML = rules;
-  document.head.appendChild(style);
-  addParticles(500);
-
-  makeCool = function (event) {
-    var start = Date.now(),
-      slice,
-      part,
-      i,
-      // Adjusting for scroll offset
-      x = event.clientX + window.scrollX,
-      y = event.clientY + window.scrollY,
-      dX = pX - x,
-      dY = pY - y,
-      length = Math.pow(Math.pow(dX, 2) + Math.pow(dY, 2), 0.25) || 0;
-
-    if (particles.length < length) {
-      addParticles(Math.max(length, 100) * 1.5);
-    }
-
-    slice = particles.splice(0, length);
-
-    for (i = length; i--;) {
-      part = slice[i];
-      part.style.left = x + 'px'; // Aligns the particle with cursor X position
-      part.style.top = y + 'px'; // Aligns the particle with cursor Y position
-      part.style.webkitAnimation = 'drop' + (Math.random() * randomAnis || 0) + ' ' + timeout + 's linear';
-      part.style.animation = part.style.webkitAnimation;
-    }
-
-    pX = x;
-    pY = y;
-
-    totalParticles += length;
-
-    setTimeout(function () {
-      for (i = length; i--;) {
-        part = slice[i];
-        part.style.webkitAnimation = '';
-        part.style.animation = part.style.webkitAnimation;
-      }
-      particles.push.apply(particles, slice);
-      slice = null;
-      totalParticles -= length;
-      particlesDiv.textContent = totalParticles + ',' + particles.length;
-    }, timeout * 1000);
-    particlesDiv.textContent = totalParticles + ',' + particles.length;
-  };
-
-  document.addEventListener('mouseover', function (event) {
-    pX = event.clientX + window.scrollX;
-    pY = event.clientY + window.scrollY;
-  });
-  document.addEventListener('mousemove', makeCool, true);
-
-  function storeFPS(ts) {
-    lastTimes.push(Math.max(1, -prevTime + (prevTime = performance.now())));
-    requestAnimationFrame(storeFPS);
-  }
-  requestAnimationFrame(storeFPS);
-
-  setInterval(function () {
-    fpsDiv.textContent = (
-      (1000 * lastTimes.length) /
-      lastTimes.reduce(function (a, b) {
-        return a + b;
-      })
-    ).toFixed(1);
-    lastTimes = [];
-  }, 250);
-
-  // Apply default cursor to the whole page
-  applyCursor('body', '/whereismyfun42/eyered.ani');
-
-  // Apply text select cursor to text elements
-  applyCursor('body, p, h1, h2, h3, blockquote', '/whereismyfun42/text65.ani');
-
-  // Apply button click cursor to interactive elements
-  applyCursor('button, a, input, textarea', '/whereismyfun42/eyeblue.ani');
-
-  // Add hover effect for button and link cursors directly in CSS for better control
   const cursorStyle = document.createElement('style');
   cursorStyle.innerHTML = `
     button, a, input, textarea {
@@ -265,16 +199,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.head.appendChild(cursorStyle);
 });
 
-// Torus
+// Torus and Scene Objects
 
 const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
 const material = new THREE.MeshStandardMaterial({ color: 0xff6347 });
 const torus = new THREE.Mesh(geometry, material);
-
 scene.add(torus);
 
 // Lights
-
 const pointLight = new THREE.PointLight(0xffffff);
 pointLight.position.set(5, 5, 5);
 
@@ -282,24 +214,16 @@ const ambientLight = new THREE.AmbientLight(0xffffff);
 scene.add(pointLight, ambientLight);
 
 // Avatar
-
 const jeffTexture = new THREE.TextureLoader().load('/whereismyfun42/jeff.png');
-
 const jeff = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), new THREE.MeshBasicMaterial({ map: jeffTexture }));
-
 scene.add(jeff);
 
-// swiborg
-
+// Swiborg
 const swiborgTexture = new THREE.TextureLoader().load('/whereismyfun42/swiborg.jpg');
-
 const swiborg = new THREE.Mesh(
   new THREE.SphereGeometry(3, 32, 32),
-  new THREE.MeshStandardMaterial({
-    map: swiborgTexture,
-  })
+  new THREE.MeshStandardMaterial({ map: swiborgTexture })
 );
-
 scene.add(swiborg);
 
 swiborg.position.z = 30;

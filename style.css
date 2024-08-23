@@ -1,12 +1,14 @@
-/*@import url("https://use.typekit.net/jmk3xov.css");*/
-
+/* Ensure the canvas is positioned correctly */
 canvas {
   position: fixed;
   top: 0;
   left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* Ensures canvas is in the background */
 }
 
-
+/* Root Styles */
 :root {
   --dark-bg: rgba(15, 15, 15, 0.95);
   --spacing: 350px;
@@ -16,6 +18,7 @@ canvas {
   font-style: normal;
 }
 
+/* Top Bar Styles */
 #top-bar {
   background-image: url('/mamagnolia_acresunderconstruction.gif');
   position: fixed;
@@ -34,20 +37,7 @@ canvas {
   box-sizing: border-box;
 }
 
-part {
-	@color: #fd0;
-	@glowColor: #fed;
-	pointer-events: none;
-	display: block;
-	position: absolute;
-	z-index: 100;
-	width: 9px;
-	height: 9px;
-	margin: -4px;
-	opacity: 0;
-	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAKpJREFUeNpi/L+IgZGBgYEZiFmgmAmI/wHxHyj+ywJVwAXEfFDMCsS/gfgTFH+D6QZJSgGxBBBzAPEPIH7BAAG/kBVJMBj4ZDEISjsyvH+6n+HClmlAsS9A/IEJ6gZWsAlCMi4MTExsYIUQE8FuhDnyN9iKd0/2MPz/9wtsEsRKkMP/MQJ9B9IhgsNNz4D4DQtU9SeoI79g8d0fkKK/IG+CfAFyJLZwAggwAL7rODKpW/oeAAAAAElFTkSuQmCC') no-repeat;}
-
-
+/* Main Content Area */
 main {
   width: 100vw;
   height: 20vw;
@@ -56,51 +46,87 @@ main {
   position: absolute;
   margin: 0px auto;
   padding: 120px 0px;
-  
   display: grid;
   grid-template-columns: repeat(12, 1fr);
 }
 
-h1, h2, h3, blockquote {
-  font-family: elevon, sans-serif;
-  font-weight: 700;
-  font-style: normal;
+/* Header and Section Styles */
+header {
+  background: var(--dark-bg);
+  grid-column: 2 / span 5;
+  font-size: 2.5rem;
+  padding: 2rem;
+  margin-bottom: var(--spacing);
 }
 
+section {
+  grid-column: 2 / span 10;
+  padding: 1rem;
+  background: var(--dark-bg);
+  font-size: 1.25rem;
+  line-height: 1.5;
+  margin-bottom: var(--spacing);
+}
 
+blockquote {
+  margin: 0;
+  padding: 0;
+  grid-column: 2 / span 9;
+  margin-bottom: var(--spacing);
+}
 
-  header {
-    background: var(--dark-bg);
-    grid-column: 2 / span 5;
-    font-size: 2.5rem;
-    padding: 2rem;
-    margin-bottom: var(--spacing);
+blockquote p {
+  color: black;
+  background-color: white;
+  font-size: 4rem;
+  display: inline;
+  line-height: 1;
+}
+
+.left {
+  grid-column: 6 / 12;
+}
+
+/* Particle Styles */
+.particles {
+  pointer-events: none;
+  position: absolute;
+  z-index: 100;
+  width: 9px;
+  height: 9px;
+  margin: -4px;
+  opacity: 0; /* Default opacity */
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAKpJREFUeNpi/L+IgZGBgYEZiFmgmAmI/wHxHyj+ywJVwAXEfFDMCsS/gfgTFH+D6QZJSgGxBBBzAPEPIH7BAAG/kBVJMBj4ZDEISjsyvH+6n+HClmlAsS9A/IEJ6gZWsAlCMi4MTExsYIUQE8FuhDnyN9iKd0/2MPz/9wtsEsRKkMP/MQJ9B9IhgsNNz4D4DQtU9SeoI79g8d0fkKK/IG+CfAFyJLZwAggwAL7rODKpW/oeAAAAAElFTkSuQmCC') no-repeat;
+}
+
+.particle {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAKpJREFUeNpi/L+IgZGBgYEZiFmgmAmI/wHxHyj+ywJVwAXEfFDMCsS/gfgTFH+D6QZJSgGxBBBzAPEPIH7BAAG/kBVJMBj4ZDEISjsyvH+6n+HClmlAsS9A/IEJ6gZWsAlCMi4MTExsYIUQE8FuhDnyN9iKd0/2MPz/9wtsEsRKkMP/MQJ9B9IhgsNNz4D4DQtU9SeoI79g8d0fkKK/IG+CfAFyJLZwAggwAL7rODKpW/oeAAAAAElFTkSuQmCC') no-repeat;
+  pointer-events: none;
+  opacity: 0; /* Default opacity */
+  animation: none;
+  z-index: 9999;
+}
+
+/* Keyframe Animations for Particles */
+@keyframes drop {
+  0% {
+    opacity: 1;
+    transform: translate(0px, 0px) scale(1);
   }
-
-  section {
-    grid-column: 2 / span 10;
-    padding: 1rem;
-    background: var(--dark-bg);
-    font-size: 1.25rem;
-    line-height: 1.5;
-    margin-bottom: var(--spacing);
+  100% {
+    opacity: 0;
+    transform: translate(100px, 100px) scale(0.5);
   }
+}
 
-  blockquote {
-    margin: 0;
-    padding: 0;
-    grid-column: 2 / span 9;
-    margin-bottom: var(--spacing);
-  }
+/* Cursor Styling */
+button, a, input, textarea {
+  cursor: url('/whereismyfun42/eyeblue.ani'), auto;
+}
 
-  blockquote p {
-    color: black;
-    background-color: white;
-    font-size: 4rem;
-    display: inline;
-    line-height: 1;
-  }
-
-  .left {
-    grid-column: 6 / 12;
-  }
+body, p, h1, h2, h3, blockquote {
+  cursor: url('/whereismyfun42/text65.ani'), auto;
+}
