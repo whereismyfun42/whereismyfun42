@@ -8,6 +8,13 @@ canvas {
   z-index: -1; /* Ensures canvas is in the background */
 }
 
+@font-face {
+  font-family: 'arcadefont';
+  src: url('/fonts/ARCADECLASSIC.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* Root Styles */
 :root {
   --dark-bg: rgba(15, 15, 15, 0.95);
@@ -50,14 +57,197 @@ main {
   grid-template-columns: repeat(12, 1fr);
 }
 
-/* Header and Section Styles */
+/* Header Styles */
 header {
   background: var(--dark-bg);
+  background-image: url('/headervaporwave.gif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: multiply;
   grid-column: 2 / span 5;
   font-size: 2.5rem;
   padding: 2rem;
   margin-bottom: var(--spacing);
+  position: relative;
+  overflow: visible; /* Allow elements to be visible outside the header */
+  min-height: 300px;
+  color: white;
+  box-sizing: border-box;
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center items vertically */
+  font-family: 'arcadefont', sans-serif;
 }
+
+/* Header Title */
+header h1 {
+  margin: 0; /* Remove default margin */
+  z-index: 2; /* Ensure it is above other elements */
+  margin-left: 20px;
+}
+
+/* Paragraph Styling */
+header p {
+  margin: 0; /* Remove default margin */
+  padding: 0;
+  margin-left: 200px; /* Adjust margin to move the text slightly to the right */
+  z-index: 2; /* Ensure it is above other elements */
+  position: absolute; /* Position absolutely within header */
+  bottom: 0; /* Align to the bottom of the header */
+}
+
+header h1,
+header p {
+  color: violet; /* Set the text color to violet */
+  text-shadow: 
+    5px 5px 0 green, /* Outline effect (right and down) */
+    -5px -5px 0 green, /* Outline effect (left and up) */
+    5px -5px 0 green, /* Outline effect (right and up) */
+    -5px 5px 0 green; /* Outline effect (left and down) */
+}
+
+/* Dotted Border */
+header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 4px dotted white; /* Dotted border */
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* GIF as background image in the bottom left corner */
+header::after {
+  content: "";
+  position: absolute;
+  bottom: 10px; /* Adjust as needed */
+  left: 10px; /* Adjust as needed */
+  width: 100px; /* Adjust size */
+  height: 100px; /* Adjust size */
+  background-image: url('/statue.gif'); /* Path to your GIF */
+  background-size: contain; /* Scale the GIF to fit the dimensions */
+  background-repeat: no-repeat; /* Prevent repetition */
+  z-index: 2; /* Ensure it's above the background and dotted border */
+}
+
+/* TV Container in the top-right corner of the header */
+header .tv-container {
+  position: absolute;
+  top: 200px; /* Adjust as needed */
+  right: 10px; /* Adjust as needed */
+  width: 100px; /* Adjust size as needed */
+  height: 100px; /* Adjust size as needed */
+  background-image: url('/tv.png'); /* Path to your TV PNG image */
+  background-color: transparent; /* Ensure the background is transparent */
+  background-size: contain; /* Scale the PNG to fit the dimensions */
+  background-repeat: no-repeat; /* Prevent repetition */
+  z-index: 2; /* Ensure it's above other elements */
+  display: flex;
+  align-items: center; /* Center the GIF vertically */
+  justify-content: center; /* Center the GIF horizontally */
+  perspective: 500px; /* Create a 3D perspective effect */
+}
+
+/* GIF inside the TV screen with perspective adjustments */
+header .tv-container .tv-screen {
+  width: 65px; /* Adjust to fit the TV screen area */
+  height: 50px; /* Adjust to fit the TV screen area */
+  background-image: url('/retrogames.gif'); /* Path to your GIF */
+  background-size: cover; /* Scale the GIF to cover the dimensions */
+  background-repeat: no-repeat; /* Prevent repetition */
+  transform: translate(-14px, -10px) skewY(10deg) scale(0.8); /* Adjust skew and scale to fit the perspective */
+}
+
+
+
+
+/* Pac-Man and Ghost Elements */
+.pacman,
+.ghost {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  z-index: 2;
+}
+
+.pacman {
+  background: yellow;
+  border-radius: 50%;
+  clip-path: polygon(100% 50%, 0% 0%, 0% 100%);
+  animation: pacman-move 10s linear infinite, pacman-chomp 1s linear infinite;
+  animation-delay: 0.7s; /* Slight delay to ensure ghost is always ahead */
+}
+
+/* Pac-Man Eye */
+.pacman::after {
+  content: '';
+  position: absolute;
+  top: 8px; /* Position the eye towards the top */
+  left: 14px; /* Position the eye towards the center horizontally */
+  width: 6px;
+  height: 6px;
+  background: black;
+  border-radius: 50%;
+  z-index: 3; /* Ensure the eye is above the body */
+}
+
+/* Ghost Shape */
+.ghost {
+  background: red;
+  border-radius: 50% 50% 0 0;
+  position: absolute;
+  bottom: 0;
+  animation: ghost-move 10s linear infinite;
+}
+
+/* Ghost Eyes */
+.ghost::before,
+.ghost::after {
+  content: "";
+  position: absolute;
+  background: white;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  top: 10px;
+}
+
+.ghost::before {
+  left: 8px;
+}
+
+.ghost::after {
+  left: 24px;
+}
+
+/* Animation for Pac-Man moving around the border */
+@keyframes pacman-move {
+  0%, 100% { top: -20px; left: -20px; }
+  25% { top: -20px; left: calc(100% - 20px); }
+  50% { top: calc(100% - 20px); left: calc(100% - 20px); }
+  75% { top: calc(100% - 20px); left: -20px; }
+}
+
+@keyframes pacman-chomp {
+  0% { clip-path: polygon(100% 0%, 0% 0%, 0% 100%, 100% 100%, 50% 50%); } /* Mouth open */
+  50% { clip-path: polygon(100% 0%, 0% 0%, 0% 100%, 100% 100%); } /* Mouth closed */
+  100% { clip-path: polygon(100% 0%, 0% 0%, 0% 100%, 100% 100%, 50% 50%); } /* Mouth open*/
+}
+
+/* Animation for Ghost moving around the border */
+@keyframes ghost-move {
+  0%, 100% { top: -20px; left: -20px; }
+  25% { top: -20px; left: calc(100% - 20px); }
+  50% { top: calc(100% - 20px); left: calc(100% - 20px); }
+  75% { top: calc(100% - 20px); left: -20px; }
+}
+
+
 
 section {
   grid-column: 2 / span 10;
