@@ -44,6 +44,19 @@ canvas {
   box-sizing: border-box;
 }
 
+
+body {
+  margin: 0;
+  background-image: url('/ani-stars-bg.gif');
+  background-size: contain;
+  background-position: center;
+  background-repeat: repeat;
+  height: 100vh; /* Set the height to the full viewport height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Main Content Area */
 main {
   width: 100vw;
