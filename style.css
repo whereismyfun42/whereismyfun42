@@ -157,14 +157,33 @@ header .tv-container {
 header .tv-container .tv-screen {
   width: 65px; /* Adjust to fit the TV screen area */
   height: 50px; /* Adjust to fit the TV screen area */
-  background-image: url('/retrogames.gif'); /* Path to your GIF */
+  background-image: none;
   background-size: cover; /* Scale the GIF to cover the dimensions */
   background-repeat: no-repeat; /* Prevent repetition */
   transform: translate(-14px, -10px) skewY(10deg) scale(0.8); /* Adjust skew and scale to fit the perspective */
 }
 
+/* TV video styling */
+.tv-screen video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+  box-shadow: 0 0 8px #000a;
+}
 
-
+/* Background video styling */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -2;
+  pointer-events: none;
+}
 
 /* Pac-Man and Ghost Elements */
 .pacman,

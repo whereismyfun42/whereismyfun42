@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -18,7 +18,7 @@
         justify-content: center;
       }
     </style>
-    <title>Load of Fun</title>
+    <title>💾 Load of Fun 💾</title>
   </head>
   <body>
 
@@ -30,7 +30,7 @@
 
     <div class="particles"><b></b></div>
     <div class="fps"><b></b></div>
-
+    
 
     <main>
 
@@ -41,8 +41,14 @@
         <p> Welcome to my website!</p>
           <!-- TV Container -->
         <div class="tv-container">
-    <!-- TV Screen with GIF -->
-          <div class="tv-screen"></div>
+          <!-- TV Screen with VIDEO -->
+          <div class="tv-screen">
+            <video id="tv-video" autoplay loop muted playsinline width="65" height="50" style="display:block;width:100%;height:100%;object-fit:cover;">
+              <source src="/retrogames.webm" type="video/webm">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
       </header>
 
 
