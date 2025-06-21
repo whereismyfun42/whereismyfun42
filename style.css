@@ -73,7 +73,7 @@ main {
 /* Header Styles */
 header {
   background: var(--dark-bg);
-  background-image: url('/headervaporwave.gif');
+  /* background-image: url('/headervaporwave.webm'); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -196,6 +196,32 @@ header .tv-container .tv-screen {
   object-fit: cover;
   z-index: -2;
   pointer-events: none;
+}
+
+/* Add this to style the video background inside header */
+header .header-bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Overlay for darkening the header video background */
+header .header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 15, 15, 0.6); /* semi-dark overlay */
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
 }
 
 /* Pac-Man and Ghost Elements */
