@@ -73,7 +73,7 @@ main {
 /* Header Styles */
 header {
   background: var(--dark-bg);
-  /* background-image: url('/headervaporwave.webm'); */
+  /* ...existing code... */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -129,7 +129,19 @@ header::before {
   left: 0;
   right: 0;
   bottom: 0;
-  border: 4px dotted white; /* Dotted border */
+  border: 4px dotted #ffd700; /* Dotted border, brighter yellow */
+  box-shadow: 0 0 8px 2px #ffd700;
+  animation: border-blink 0.5s linear infinite;
+  @keyframes border-blink {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 8px 2px #ffd700;
+    }
+    50% {
+      opacity: 0.2;
+      box-shadow: 0 0 16px 4px #fff700;
+    }
+  }
   pointer-events: none;
   z-index: 1;
 }
@@ -225,70 +237,60 @@ header .header-overlay {
 }
 
 /* Pac-Man and Ghost Elements */
+
+
 .pacman,
+.ghost {
+  position: absolute;
+  z-index: 2;
+}
+
+
 .ghost {
   position: absolute;
   width: 40px;
   height: 40px;
   z-index: 2;
-}
-
-.pacman {
-  background: yellow;
-  border-radius: 50%;
-  clip-path: polygon(100% 50%, 0% 0%, 0% 100%);
-  animation: pacman-move 10s linear infinite, pacman-chomp 1s linear infinite;
-  animation-delay: 0.7s; /* Slight delay to ensure ghost is always ahead */
-}
-
-/* Pac-Man Eye */
-.pacman::after {
-  content: '';
-  position: absolute;
-  top: 8px; /* Position the eye towards the top */
-  left: 14px; /* Position the eye towards the center horizontally */
-  width: 6px;
-  height: 6px;
-  background: black;
-  border-radius: 50%;
-  z-index: 3; /* Ensure the eye is above the body */
-}
-
-/* Ghost Shape */
-.ghost {
-  background: red;
-  border-radius: 50% 50% 0 0;
-  position: absolute;
-  bottom: 0;
+  background: none;
   animation: ghost-move 10s linear infinite;
+  animation-delay: -0.7s;
+}
+/* removed stray closing brace */
+.pacman {
+  width: 55px;
+  height: 55px;
+  animation: pacman-move 10s linear infinite, pacman-rotate 10s linear infinite;
+  /* Removed animation-delay to keep movement and rotation in sync */
 }
 
-/* Ghost Eyes */
-.ghost::before,
-.ghost::after {
-  content: "";
-  position: absolute;
-  background: white;
-  height: 12px;
-  width: 12px;
-  border-radius: 50%;
-  top: 10px;
+@keyframes pacman-rotate {
+  0% { transform: rotate(0deg); }
+  24.9% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  49.9% { transform: rotate(90deg); }
+  50% { transform: rotate(180deg); }
+  74.9% { transform: rotate(180deg); }
+  75% { transform: rotate(270deg); }
+  99.9% { transform: rotate(270deg); }
+  100% { transform: rotate(0deg); }
 }
 
-.ghost::before {
-  left: 8px;
-}
 
-.ghost::after {
-  left: 24px;
+/* removed orphaned .pacman::after block, Pac-Man is now an image */
+
+.pacman img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  animation: pacman-rotate 10s linear infinite;
 }
 
 /* Animation for Pac-Man moving around the border */
 @keyframes pacman-move {
-  0%, 100% { top: -20px; left: -20px; }
-  25% { top: -20px; left: calc(100% - 20px); }
-  50% { top: calc(100% - 20px); left: calc(100% - 20px); }
-  75% { top: calc(100% - 20px); left: -20px; }
+  0%, 100% { top: -25px; left: -25px; }
+  25% { top: -25px; left: calc(100% - 25px); }
+  50% { top: calc(100% - 25px); left: calc(100% - 25px); }
+  75% { top: calc(100% - 25px); left: -25px; }
 }
 
 @keyframes pacman-chomp {
