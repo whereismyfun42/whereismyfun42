@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OAuth Callback Capture</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Courier New', monospace;
+      background: #1a1a2e;
+      color: #0f0;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    h1 { color: #0ff; margin-bottom: 10px; }
+    .timestamp { color: #888; font-size: 12px; margin-bottom: 20px; }
+    .section {
+      background: #16213e;
+      border: 1px solid #0f3460;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .section h2 {
+      color: #e94560;
+      margin: 0 0 10px 0;
+      font-size: 14px;
+    }
+    pre {
+      background: #0d1b2a;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin: 0;
+      font-size: 13px;
+    }
+    .highlight { color: #ff0; }
+    .sensitive { color: #e94560; font-weight: bold; }
+    .copy-btn {
+      background: #0f3460;
+      color: #0ff;
+      border: 1px solid #0ff;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-family: inherit;
+    }
+    .copy-btn:hover { background: #1a4a7a; }
+    .status { margin-top: 20px; padding: 10px; border-radius: 4px; }
+    .status.found { background: #0a3d0a; border: 1px solid #0f0; }
+    .status.empty { background: #3d0a0a; border: 1px solid #f00; }
+    footer { margin-top: 30px; color: #666; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <h1>OAuth Callback Capture</h1>
+  <div class="timestamp" id="timestamp"></div>
+
+  <div class="section">
+    <h2>FULL URL</h2>
+    <pre id="fullUrl"></pre>
+  </div>
+
+  <div class="section">
+    <h2>QUERY PARAMETERS (?key=value)</h2>
+    <pre id="queryParams"></pre>
+  </div>
+
+  <div class="section">
+    <h2>FRAGMENT (#hash)</h2>
+    <pre id="fragment"></pre>
+  </div>
+
+  <div class="section">
+    <h2>OAUTH TOKENS (Extracted)</h2>
+    <pre id="tokens"></pre>
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <button class="copy-btn" onclick="copyAll()">Copy All Data</button>
+
+  <footer>
+    Security Testing Tool - OAuth Callback Capture<br>
+    For authorized penetration testing only.
+  </footer>
+
+  <script>
+    // Capture timestamp
+    document.getElementById('timestamp').textContent = 
+      'Captured: ' + new Date().toISOString();
+
+    // Full URL
+    document.getElementById('fullUrl').textContent = window.location.href;
+
+    // Query parameters
+    const params = new URLSearchParams(window.location.search);
+    const queryObj = {};
+    for (const [key, value] of params) {
+      queryObj[key] = value;
+    }
+    document.getElementById('queryParams').textContent = 
+      Object.keys(queryObj).length > 0 
+        ? JSON.stringify(queryObj, null, 2)
+        : '(none)';
+
+    // Fragment (for implicit flow tokens)
+    const hash = window.location.hash;
+    let fragmentObj = {};
+    if (hash && hash.length > 1) {
+      const hashParams = new URLSearchParams(hash.substring(1));
+      for (const [key, value] of hashParams) {
+        fragmentObj[key] = value;
+      }
+    }
+    document.getElementById('fragment').textContent = 
+      Object.keys(fragmentObj).length > 0 
+        ? JSON.stringify(fragmentObj, null, 2)
+        : hash || '(none)';
+
+    // Extract OAuth-specific tokens
+    const tokens = {
+      // From query string (Authorization Code flow)
+      code: params.get('code'),
+      state: params.get('state'),
+      error: params.get('error'),
+      error_description: params.get('error_description'),
+      
+      // From fragment (Implicit flow)
+      access_token: fragmentObj.access_token || null,
+      token_type: fragmentObj.token_type || null,
+      expires_in: fragmentObj.expires_in || null,
+      id_token: fragmentObj.id_token || null,
+      
+      // Additional OAuth params
+      scope: params.get('scope') || fragmentObj.scope || null,
+      session_state: params.get('session_state') || fragmentObj.session_state || null
+    };
+
+    // Filter out nulls for display
+    const filteredTokens = {};
+    for (const [k, v] of Object.entries(tokens)) {
+      if (v !== null) filteredTokens[k] = v;
+    }
+
+    document.getElementById('tokens').textContent = 
+      Object.keys(filteredTokens).length > 0 
+        ? JSON.stringify(filteredTokens, null, 2)
+        : '(no OAuth tokens found)';
+
+    // Status indicator
+    const statusEl = document.getElementById('status');
+    if (tokens.code || tokens.access_token) {
+      statusEl.className = 'status found';
+      statusEl.innerHTML = '<strong>TOKEN CAPTURED!</strong><br>' +
+        (tokens.code ? 'Authorization Code: ' + tokens.code.substring(0, 20) + '...' : '') +
+        (tokens.access_token ? 'Access Token: ' + tokens.access_token.substring(0, 20) + '...' : '');
+    } else if (tokens.error) {
+      statusEl.className = 'status empty';
+      statusEl.innerHTML = '<strong>OAuth Error:</strong> ' + tokens.error + 
+        (tokens.error_description ? '<br>' + tokens.error_description : '');
+    } else {
+      statusEl.className = 'status empty';
+      statusEl.textContent = 'No OAuth tokens in URL. This page captures redirect_uri callbacks.';
+    }
+
+    // Copy function
+    function copyAll() {
+      const data = {
+        timestamp: new Date().toISOString(),
+        url: window.location.href,
+        query: queryObj,
+        fragment: fragmentObj,
+        tokens: filteredTokens
+      };
+      navigator.clipboard.writeText(JSON.stringify(data, null, 2))
+        .then(() => alert('Copied to clipboard!'))
+        .catch(err => alert('Copy failed: ' + err));
+    }
+
+    // Log to console for debugging
+    console.log('=== OAuth Callback Capture ===');
+    console.log('Full URL:', window.location.href);
+    console.log('Query Params:', queryObj);
+    console.log('Fragment:', fragmentObj);
+    console.log('Extracted Tokens:', filteredTokens);
+  </script>
+</body>
+</html>
